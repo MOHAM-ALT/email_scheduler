@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEMORI Gmail Scheduler Pro</title>
+    <link rel="stylesheet" href="css/popup.css">
+</head>
+<body>
+    <!-- Fixed Header with Animated Logo -->
+    <div class="header-fixed" id="header">
+        <div class="logo-container">
+            <img src="images/demori-logo.png" alt="DEMORI" class="logo-animated">
+            <div class="logo-text">
+                <h1>DEMORI</h1>
+                <span>Gmail Scheduler Pro</span>
+            </div>
+        </div>
+        <div class="header-stats">
+            <span id="email-count">0 emails</span>
+            <span id="connection-status" class="status-disconnected">🔴 Disconnected</span>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <!-- Authentication Section -->
+        <div id="auth-section" class="section">
+            <div class="auth-card">
+                <h2>🔐 Gmail Authentication</h2>
+                <p>Connect your Gmail account to start scheduling emails</p>
+                <button id="auth-btn" class="btn-primary">
+                    <span class="btn-icon">🔗</span>
+                    Connect Gmail Account
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Scheduler Interface -->
+        <div id="scheduler-section" class="section hidden">
+            <div class="card">
+                <h2>📧 Email Campaign Setup</h2>
+                
+                <!-- Recipients -->
+                <div class="form-group">
+                    <label class="label-pro">
+                        <span class="label-text">Recipients List</span>
+                        <span class="label-count" id="recipient-count">0 recipients</span>
+                    </label>
+                    <textarea 
+                        id="recipients" 
+                        placeholder="email1@example.com,John Doe
+email2@example.com,Jane Smith
+email3@example.com,Alex Johnson
+
+Format: email,name (name optional for personalization)"
+                        rows="6"
+                    ></textarea>
+                </div>
+
+                <!-- Email Details -->
+                <div class="form-row">
+                    <div class="form-group flex-2">
+                        <label class="label-pro">Subject Line</label>
+                        <input 
+                            type="text" 
+                            id="subject" 
+                            placeholder="Your professional email subject"
+                            maxlength="100"
+                        >
+                        <div class="char-counter">
+                            <span id="subject-count">0</span>/100 characters
+                        </div>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label class="label-pro">Email Type</label>
+                        <select id="email-type">
+                            <option value="to">Direct (TO)</option>
+                            <option value="bcc" selected>BCC (Recommended)</option>
+                            <option value="cc">CC (Copy)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Email Body -->
+                <div class="form-group">
+                    <label class="label-pro">
+                        <span class="label-text">Email Message</span>
+                        <span class="personalization-tip">💡 Use {{name}} for personalization</span>
+                    </label>
+                    <textarea 
+                        id="message" 
+                        placeholder="Dear {{name}},
+
+I hope this email finds you well.
+
+[Your message content here]
+
+Best regards,
+Your Name
+
+---
+If you'd like to unsubscribe, please reply with 'UNSUBSCRIBE'"
+                        rows="8"
+                    ></textarea>
+                    <div class="char-counter">
+                        <span id="message-count">0</span> characters
+                    </div>
+                </div>
+
+                <!-- Scheduling Options -->
+                <div class="card-inner">
+                    <h3>⏰ Smart Scheduling Options</h3>
+                    
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <label class="label-pro">Distribution Mode</label>
+                            <select id="distribution-mode">
+                                <option value="recommended">🎯 Recommended (499/day)</option>
+                                <option value="conservative">🛡️ Conservative (50/day)</option>
+                                <option value="aggressive">⚡ Aggressive (Custom)</option>
+                            </select>
+                        </div>
+                        <div class="form-group flex-1" id="custom-rate-group" style="display: none;">
+                            <label class="label-pro">Emails per Day</label>
+                            <input type="number" id="custom-rate" min="1" max="500" value="100">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <label class="label-pro">Batch Size</label>
+                            <select id="batch-size">
+                                <option value="10" selected>10 emails per batch</option>
+                                <option value="5">5 emails per batch</option>
+                                <option value="1">1 email per batch</option>
+                            </select>
+                        </div>
+                        <div class="form-group flex-1">
+                            <label class="label-pro">Delay Between Batches</label>
+                            <select id="batch-delay">
+                                <option value="2">2 minutes (Recommended)</option>
+                                <option value="1">1 minute</option>
+                                <option value="3">3 minutes</option>
+                                <option value="5">5 minutes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="label-pro">Start Date & Time</label>
+                        <div class="datetime-group">
+                            <input type="date" id="start-date">
+                            <input type="time" id="start-time" value="09:00">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campaign Preview -->
+                <div class="preview-card" id="campaign-preview">
+                    <h3>📊 Campaign Preview</h3>
+                    <div class="preview-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Total Recipients:</span>
+                            <span class="stat-value" id="preview-recipients">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Daily Rate:</span>
+                            <span class="stat-value" id="preview-daily">0/day</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Campaign Duration:</span>
+                            <span class="stat-value" id="preview-duration">0 days</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Completion Date:</span>
+                            <span class="stat-value" id="preview-completion">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button id="preview-btn" class="btn-secondary">
+                        <span class="btn-icon">👁️</span>
+                        Preview Campaign
+                    </button>
+                    <button id="schedule-btn" class="btn-primary">
+                        <span class="btn-icon">🚀</span>
+                        Schedule Campaign
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Campaign Management -->
+        <div id="campaigns-section" class="section">
+            <div class="card">
+                <h2>📋 Active Campaigns</h2>
+                <div id="campaigns-list">
+                    <div class="empty-state">
+                        <p>No active campaigns yet</p>
+                        <small>Create your first campaign above</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings -->
+        <div id="settings-section" class="section">
+            <div class="card">
+                <h2>⚙️ Advanced Settings</h2>
+                
+                <div class="setting-group">
+                    <h3>🛡️ Anti-Spam Protection</h3>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="randomize-timing" checked>
+                            <span class="checkmark"></span>
+                            Randomize sending times
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="avoid-weekends" checked>
+                            <span class="checkmark"></span>
+                            Skip weekends
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="personalization" checked>
+                            <span class="checkmark"></span>
+                            Auto-personalization
+                        </label>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <h3>📊 Analytics</h3>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="track-opens">
+                            <span class="checkmark"></span>
+                            Track email opens
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="track-clicks">
+                            <span class="checkmark"></span>
+                            Track link clicks
+                        </label>
+                    </div>
+                </div>
+
+                <button id="reset-settings" class="btn-danger">
+                    <span class="btn-icon">🔄</span>
+                    Reset to Defaults
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button class="nav-btn active" data-section="scheduler">
+            <span class="nav-icon">📧</span>
+            <span class="nav-label">Scheduler</span>
+        </button>
+        <button class="nav-btn" data-section="campaigns">
+            <span class="nav-icon">📋</span>
+            <span class="nav-label">Campaigns</span>
+        </button>
+        <button class="nav-btn" data-section="settings">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-label">Settings</span>
+        </button>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p id="loading-text">Processing...</p>
+        </div>
+    </div>
+
+    <script src="js/popup.js"></script>
+</body>
+</html>
