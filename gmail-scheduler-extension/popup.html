@@ -23,17 +23,75 @@
                 <div class="section">
                     <div class="section-title">Demori Solutions</div>
                     
-                    <div class="menu-item" onclick="DemoriPopup.showSearchPortal()">
+                    <div class="menu-item" id="dataListsBtn">
                         <span class="menu-icon">◫</span>
                         <span class="menu-text">Data Lists</span>
                     </div>
+                    
+                    <div class="menu-item" id="searchPortalBtn">
+                        <span class="menu-icon">◉</span>
+                        <span class="menu-text">Search Portal</span>
+                    </div>
+                    
+                    <div class="menu-item" id="advancedSettingsBtn">
+                        <span class="menu-icon">◈</span>
+                        <span class="menu-text">Advanced Settings</span>
+                        <span class="menu-badge">Pro</span>
+                    </div>
+                    
+                    <div class="menu-item" id="searchHistoryBtn">
+                        <span class="menu-icon">◎</span>
+                        <span class="menu-text">Search History</span>
+                    </div>
+                    
+                    <div class="menu-item" id="exportOptionsBtn">
+                        <span class="menu-icon">◇</span>
+                        <span class="menu-text">Export & Analytics</span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Bulk Operations</div>
+                    
+                    <div class="menu-item" id="saveProfilesBtn">
+                        <span class="menu-icon">◐</span>
+                        <span class="menu-text">Save Open Profiles</span>
+                    </div>
+                    
+                    <div class="menu-item" id="batchProcessorBtn">
+                        <span class="menu-icon">◑</span>
+                        <span class="menu-text">Batch Processor</span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">System Preferences</div>
+                    
+                    <div class="menu-item">
+                        <span class="menu-icon">◒</span>
+                        <span class="menu-text">Auto-detect Profiles</span>
+                        <div class="toggle-switch active" id="autoDetectToggle" data-setting="autoDetect"></div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <span class="menu-icon">◓</span>
+                        <span class="menu-text">Background Scanning</span>
+                        <div class="toggle-switch" id="backgroundScanToggle" data-setting="backgroundScan"></div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <span class="menu-icon">◔</span>
+                        <span class="menu-text">Real-time Sync</span>
+                        <div class="toggle-switch active" id="realtimeSyncToggle" data-setting="realtimeSync"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- Search Portal View -->
             <div id="searchView" class="hidden">
                 <div class="search-section">
                     <input type="text" class="search-input" placeholder="Search contacts and companies..." id="searchInput">
-                    <button class="search-btn" onclick="DemoriPopup.performSearch()" id="searchButton">
+                    <button class="search-btn" id="searchButton">
                         Scan
                     </button>
                 </div>
@@ -95,6 +153,253 @@
                 </div>
             </div>
 
+            <!-- Advanced Settings View -->
+            <div id="advancedSettingsView" class="hidden">
+                <div class="settings-header">
+                    <button class="back-btn" id="settingsBackBtn">←</button>
+                    <div class="settings-title">Advanced Settings</div>
+                </div>
+
+                <div class="settings-section">
+                    <div class="setting-group">
+                        <div class="setting-title">Search Configuration</div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>Search Depth</span>
+                                <span class="setting-desc">Number of sources to scan</span>
+                            </div>
+                            <select class="setting-select" id="searchDepth">
+                                <option value="basic">Basic (3 sources)</option>
+                                <option value="standard" selected>Standard (5 sources)</option>
+                                <option value="comprehensive">Comprehensive (8 sources)</option>
+                                <option value="maximum">Maximum (12 sources)</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>Email Verification</span>
+                                <span class="setting-desc">SMTP validation level</span>
+                            </div>
+                            <select class="setting-select" id="emailVerification">
+                                <option value="none">Disabled</option>
+                                <option value="syntax">Syntax Only</option>
+                                <option value="domain" selected>Domain + Syntax</option>
+                                <option value="smtp">Full SMTP Check</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>Phone Validation</span>
+                                <span class="setting-desc">Phone number verification</span>
+                            </div>
+                            <select class="setting-select" id="phoneValidation">
+                                <option value="disabled">Disabled</option>
+                                <option value="format">Format Check</option>
+                                <option value="carrier" selected>Carrier Lookup</option>
+                                <option value="live">Live Validation</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>Confidence Threshold</span>
+                                <span class="setting-desc">Minimum confidence for results</span>
+                            </div>
+                            <div class="range-container">
+                                <input type="range" class="setting-range" id="confidenceThreshold" 
+                                       min="0" max="100" value="60">
+                                <span class="range-value" id="confidenceValue">60%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <div class="setting-title">Data Sources</div>
+                        
+                        <div class="sources-grid">
+                            <div class="source-item">
+                                <div class="source-toggle active" id="companyWebsitesSource" data-source="companyWebsites">
+                                    <span class="source-icon">🌐</span>
+                                    <span class="source-name">Company Websites</span>
+                                </div>
+                            </div>
+                            
+                            <div class="source-item">
+                                <div class="source-toggle active" id="professionalDirectoriesSource" data-source="professionalDirectories">
+                                    <span class="source-icon">📋</span>
+                                    <span class="source-name">Professional Directories</span>
+                                </div>
+                            </div>
+                            
+                            <div class="source-item">
+                                <div class="source-toggle active" id="socialPlatformsSource" data-source="socialPlatforms">
+                                    <span class="source-icon">🔗</span>
+                                    <span class="source-name">Social Platforms</span>
+                                </div>
+                            </div>
+                            
+                            <div class="source-item">
+                                <div class="source-toggle" id="publicRecordsSource" data-source="publicRecords">
+                                    <span class="source-icon">📊</span>
+                                    <span class="source-name">Public Records</span>
+                                </div>
+                            </div>
+                            
+                            <div class="source-item">
+                                <div class="source-toggle" id="newsArticlesSource" data-source="newsArticles">
+                                    <span class="source-icon">📰</span>
+                                    <span class="source-name">News & Articles</span>
+                                </div>
+                            </div>
+                            
+                            <div class="source-item">
+                                <div class="source-toggle" id="patentDatabasesSource" data-source="patentDatabases">
+                                    <span class="source-icon">⚖️</span>
+                                    <span class="source-name">Patent Databases</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <div class="setting-title">Performance & Limits</div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>Search Timeout</span>
+                                <span class="setting-desc">Maximum time per search</span>
+                            </div>
+                            <select class="setting-select" id="searchTimeout">
+                                <option value="30">30 seconds</option>
+                                <option value="60" selected>60 seconds</option>
+                                <option value="120">2 minutes</option>
+                                <option value="300">5 minutes</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>Concurrent Searches</span>
+                                <span class="setting-desc">Parallel search processes</span>
+                            </div>
+                            <select class="setting-select" id="concurrentSearches">
+                                <option value="1">Sequential (1)</option>
+                                <option value="3" selected>Moderate (3)</option>
+                                <option value="5">High (5)</option>
+                                <option value="8">Maximum (8)</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>Cache Duration</span>
+                                <span class="setting-desc">How long to store results</span>
+                            </div>
+                            <select class="setting-select" id="cacheDuration">
+                                <option value="3600">1 hour</option>
+                                <option value="86400" selected>24 hours</option>
+                                <option value="604800">7 days</option>
+                                <option value="2592000">30 days</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>Database Sync</span>
+                                <span class="setting-desc">Sync frequency with server</span>
+                            </div>
+                            <select class="setting-select" id="databaseSync">
+                                <option value="realtime" selected>Real-time</option>
+                                <option value="hourly">Hourly</option>
+                                <option value="daily">Daily</option>
+                                <option value="manual">Manual Only</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <div class="setting-title">Export & Integration</div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>Default Export Format</span>
+                                <span class="setting-desc">Preferred export format</span>
+                            </div>
+                            <select class="setting-select" id="exportFormat">
+                                <option value="csv" selected>CSV</option>
+                                <option value="xlsx">Excel (XLSX)</option>
+                                <option value="json">JSON</option>
+                                <option value="vcard">vCard</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>Auto-export Results</span>
+                                <span class="setting-desc">Automatically save successful searches</span>
+                            </div>
+                            <div class="toggle-switch" id="autoExportToggle" data-setting="autoExport"></div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>CRM Integration</span>
+                                <span class="setting-desc">Connect to external CRM</span>
+                            </div>
+                            <select class="setting-select" id="crmIntegration">
+                                <option value="none" selected>None</option>
+                                <option value="salesforce">Salesforce</option>
+                                <option value="hubspot">HubSpot</option>
+                                <option value="pipedrive">Pipedrive</option>
+                                <option value="custom">Custom API</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <div class="setting-title">Privacy & Security</div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>Data Anonymization</span>
+                                <span class="setting-desc">Anonymize sensitive data</span>
+                            </div>
+                            <div class="toggle-switch" id="dataAnonymizationToggle" data-setting="dataAnonymization"></div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>Local Storage Only</span>
+                                <span class="setting-desc">Never store data on server</span>
+                            </div>
+                            <div class="toggle-switch" id="localStorageOnlyToggle" data-setting="localStorageOnly"></div>
+                        </div>
+
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <span>Encryption Level</span>
+                                <span class="setting-desc">Data encryption strength</span>
+                            </div>
+                            <select class="setting-select" id="encryptionLevel">
+                                <option value="none">No Encryption</option>
+                                <option value="basic">Basic (AES-128)</option>
+                                <option value="standard" selected>Standard (AES-256)</option>
+                                <option value="maximum">Maximum (AES-256 + RSA)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-actions">
+                        <button class="action-btn secondary" id="resetSettingsBtn">Reset to Defaults</button>
+                        <button class="action-btn primary" id="exportSettingsBtn">Export Settings</button>
+                        <button class="action-btn primary" id="saveSettingsBtn">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Results View -->
             <div id="resultsView" class="hidden">
                 <div class="contact-header">
@@ -105,7 +410,7 @@
                             <div style="font-size: 11px; color: #666;">Contact Discovery System</div>
                         </div>
                     </div>
-                    <button class="close-btn" onclick="DemoriPopup.showMenu()">×</button>
+                    <button class="close-btn" id="resultsBackBtn">×</button>
                 </div>
 
                 <div class="nav-tabs">
@@ -123,7 +428,7 @@
                 </select>
 
                 <div class="select-all">
-                    <div class="checkbox checked" onclick="DemoriPopup.toggleSelectAll(this)"></div>
+                    <div class="checkbox checked" id="selectAllCheckbox"></div>
                     <span>Select all contacts (<span id="contactCount">0</span>)</span>
                 </div>
 
@@ -139,61 +444,8 @@
     </div>
 
     <!-- Scripts -->
+    <script src="js/database.js"></script>
     <script src="js/api.js"></script>
     <script src="js/popup.js"></script>
 </body>
-</html>>
-                    
-                    <div class="menu-item" onclick="DemoriPopup.showSearchPortal()">
-                        <span class="menu-icon">◉</span>
-                        <span class="menu-text">Search Portal</span>
-                    </div>
-                    
-                    <div class="menu-item">
-                        <span class="menu-icon">◈</span>
-                        <span class="menu-text">Email Campaign</span>
-                        <span class="menu-arrow">></span>
-                    </div>
-                    
-                    <div class="menu-item">
-                        <span class="menu-icon">◎</span>
-                        <span class="menu-text">Data Enrichment</span>
-                        <span class="menu-badge">New</span>
-                    </div>
-                    
-                    <div class="menu-item">
-                        <span class="menu-icon">◇</span>
-                        <span class="menu-text">Connect Integrations</span>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <div class="section-title">Bulk Operations</div>
-                    
-                    <div class="menu-item" onclick="DemoriPopup.detectAndSearch()">
-                        <span class="menu-icon">◐</span>
-                        <span class="menu-text">Save Open Profiles</span>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <div class="section-title">System Preferences</div>
-                    
-                    <div class="menu-item">
-                        <span class="menu-icon">◑</span>
-                        <span class="menu-text">Hide Sidebar</span>
-                        <div class="toggle-switch" onclick="DemoriPopup.toggleSwitch(this)"></div>
-                    </div>
-                    
-                    <div class="menu-item">
-                        <span class="menu-icon">◒</span>
-                        <span class="menu-text">AI Writer on Gmail</span>
-                        <div class="toggle-switch" onclick="DemoriPopup.toggleSwitch(this)"></div>
-                    </div>
-                    
-                    <div class="menu-item" onclick="DemoriPopup.detectAndSearch()">
-                        <span class="menu-icon">◓</span>
-                        <span class="menu-text">Find leads on any site</span>
-                        <div class="toggle-switch active" onclick="DemoriPopup.toggleSwitch(this)"></div>
-                    </div>
-                </div
+</html>

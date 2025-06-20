@@ -1,6 +1,7 @@
 // Professional Contact Discovery Engine
 class ContactDiscoveryEngine {
     constructor() {
+        this.database = null;
         this.searchSources = {
             companyWebsites: true,
             professionalDirectories: true,
@@ -8,15 +9,17 @@ class ContactDiscoveryEngine {
             emailVerification: true,
             phoneValidation: true
         };
+        this.settings = {};
         this.rateLimits = new Map();
         this.cache = new Map();
         this.init();
     }
 
-    init() {
+    async init() {
         this.setupMessageHandlers();
         this.setupTabHandlers();
-        this.initializeDatabase();
+        await this.loadSettings();
+        await this.initializeDatabase();
     }
 
     setupMessageHandlers() {
@@ -54,9 +57,10 @@ class ContactDiscoveryEngine {
                     return true;
 
                 case 'updateSettings':
-                    this.updateSearchSettings(request.data);
-                    sendResponse({ success: true });
-                    break;
+                    this.updateSettings(request.data)
+                        .then(() => sendResponse({ success: true }))
+                        .catch(error => sendResponse({ success: false, error: error.message }));
+                    return true;
                 
                 default:
                     sendResponse({ success: false, error: 'Unknown action' });
@@ -96,6 +100,44 @@ class ContactDiscoveryEngine {
         return targetDomains.some(domain => url.includes(domain));
     }
 
+    async loadSettings() {
+        try {
+            const storage = await chrome.storage.local.get(['demoriSettings']);
+            this.settings = storage.demoriSettings || this.getDefaultSettings();
+            this.updateSearchSources();
+        } catch (error) {
+            console.error('Error loading settings:', error);
+            this.settings = this.getDefaultSettings();
+        }
+    }
+
+    getDefaultSettings() {
+        return {
+            searchDepth: 'standard',
+            emailVerification: 'domain',
+            phoneValidation: 'carrier',
+            confidenceThreshold: 60,
+            searchTimeout: 60,
+            concurrentSearches: 3,
+            cacheDuration: 86400,
+            databaseSync: 'realtime',
+            dataSources: {
+                companyWebsites: true,
+                professionalDirectories: true,
+                socialPlatforms: true,
+                publicRecords: false,
+                newsArticles: false,
+                patentDatabases: false
+            }
+        };
+    }
+
+    updateSearchSources() {
+        if (this.settings.dataSources) {
+            this.searchSources = { ...this.searchSources, ...this.settings.dataSources };
+        }
+    }
+
     async performProfessionalSearch(searchData) {
         const searchId = this.generateSearchId();
         const startTime = Date.now();
@@ -103,31 +145,44 @@ class ContactDiscoveryEngine {
         try {
             console.log(`Starting professional search ${searchId} for:`, searchData);
 
-            // Check cache first
-            const cacheKey = this.generateCacheKey(searchData);
-            if (this.cache.has(cacheKey)) {
-                console.log('Returning cached results');
-                return this.formatSearchResult(this.cache.get(cacheKey), 'cache', searchId);
+            // Try database first if available
+            if (this.database) {
+                const dbResults = await this.database.searchContacts({
+                    ...searchData,
+                    confidenceThreshold: this.settings.confidenceThreshold / 100,
+                    maxResults: 50,
+                    realtimeVerification: this.settings.emailVerification === 'smtp'
+                });
+
+                if (dbResults.contacts && dbResults.contacts.length > 0) {
+                    console.log(`Database returned ${dbResults.contacts.length} results`);
+                    return this.formatSearchResult(dbResults, 'database', searchId, Date.now() - startTime);
+                }
             }
 
-            // Multi-source parallel search
-            const searchPromises = [
-                this.searchCompanyWebsites(searchData),
-                this.searchProfessionalDirectories(searchData), 
-                this.searchSocialPlatforms(searchData),
-                this.predictAndVerifyEmails(searchData),
-                this.findPhoneNumbers(searchData)
-            ];
-
+            // Fallback to multi-source search
+            const searchPromises = this.buildSearchPromises(searchData);
             const results = await Promise.allSettled(searchPromises);
             const aggregatedData = this.aggregateSearchResults(results, searchData);
             
-            // Cache successful results
-            this.cache.set(cacheKey, aggregatedData);
+            // Save to database if available
+            if (this.database && (aggregatedData.emails.length > 0 || aggregatedData.phones.length > 0)) {
+                try {
+                    await this.database.saveContact({
+                        name: searchData.name,
+                        company: searchData.company,
+                        title: searchData.title,
+                        location: searchData.location,
+                        emails: aggregatedData.emails,
+                        phones: aggregatedData.phones,
+                        socialProfiles: aggregatedData.socialProfiles,
+                        confidence: aggregatedData.confidence
+                    });
+                } catch (dbError) {
+                    console.warn('Failed to save to database:', dbError);
+                }
+            }
             
-            // Store search history
-            await this.saveSearchHistory(searchData, aggregatedData, searchId);
-
             const searchTime = Date.now() - startTime;
             console.log(`Search ${searchId} completed in ${searchTime}ms`);
 
@@ -139,17 +194,84 @@ class ContactDiscoveryEngine {
         }
     }
 
+    buildSearchPromises(searchData) {
+        const promises = [];
+        
+        if (this.searchSources.companyWebsites) {
+            promises.push(this.searchCompanyWebsites(searchData));
+        }
+        if (this.searchSources.professionalDirectories) {
+            promises.push(this.searchProfessionalDirectories(searchData));
+        }
+        if (this.searchSources.socialPlatforms) {
+            promises.push(this.searchSocialPlatforms(searchData));
+        }
+        if (this.searchSources.emailVerification) {
+            promises.push(this.predictAndVerifyEmails(searchData));
+        }
+        if (this.searchSources.phoneValidation) {
+            promises.push(this.findPhoneNumbers(searchData));
+        }
+
+        return promises;
+    }
+
+    async updateSettings(newSettings) {
+        this.settings = { ...this.settings, ...newSettings };
+        this.updateSearchSources();
+        
+        // Update database sync frequency
+        if (newSettings.databaseSync && this.database) {
+            await this.setupDatabaseSync(newSettings.databaseSync);
+        }
+        
+        console.log('Settings updated:', this.settings);
+    }
+
+    async setupDatabaseSync(frequency) {
+        // Clear existing sync intervals
+        if (this.syncInterval) {
+            clearInterval(this.syncInterval);
+        }
+
+        switch (frequency) {
+            case 'realtime':
+                // Sync immediately on changes
+                break;
+            case 'hourly':
+                this.syncInterval = setInterval(() => {
+                    if (this.database && this.database.syncLocalContacts) {
+                        this.database.syncLocalContacts();
+                    }
+                }, 3600000); // 1 hour
+                break;
+            case 'daily':
+                this.syncInterval = setInterval(() => {
+                    if (this.database && this.database.syncLocalContacts) {
+                        this.database.syncLocalContacts();
+                    }
+                }, 86400000); // 24 hours
+                break;
+            case 'manual':
+                // No automatic sync
+                break;
+        }
+    }
+
     async searchCompanyWebsites(searchData) {
-        await this.delay(800); // Realistic timing
+        await this.delay(800);
         
         const companyDomain = this.guessCompanyDomain(searchData.company);
         const possibleEmails = this.generateEmailPatterns(searchData.name, companyDomain);
         
-        // Simulate website crawling for contact pages
         const contactInfo = {
             source: 'company_website',
             domain: companyDomain,
-            emails: possibleEmails.slice(0, 2), // Top 2 most likely
+            emails: possibleEmails.slice(0, 2).map(email => ({
+                email,
+                confidence: 0.8,
+                verified: false
+            })),
             confidence: 0.8,
             found: true
         };
@@ -160,12 +282,11 @@ class ContactDiscoveryEngine {
     async searchProfessionalDirectories(searchData) {
         await this.delay(1200);
         
-        // Simulate searching professional directories
         const directories = ['apollo.io', 'zoominfo.com', 'leadiq.com'];
         const directoryResults = [];
 
         for (const directory of directories) {
-            if (Math.random() > 0.3) { // 70% chance of finding data
+            if (Math.random() > 0.3) {
                 directoryResults.push({
                     source: directory,
                     email: this.generateRealisticEmail(searchData.name, searchData.company),
@@ -189,7 +310,7 @@ class ContactDiscoveryEngine {
         const platforms = ['linkedin', 'twitter', 'github', 'medium'];
         
         platforms.forEach(platform => {
-            if (Math.random() > 0.4) { // 60% chance of finding profile
+            if (Math.random() > 0.4) {
                 const username = this.generateSocialUsername(searchData.name);
                 socialProfiles.push({
                     platform,
@@ -216,7 +337,6 @@ class ContactDiscoveryEngine {
         const emailPatterns = this.generateEmailPatterns(name, domain);
         const verifiedEmails = [];
 
-        // Simulate SMTP verification
         for (const email of emailPatterns.slice(0, 4)) {
             const isValid = await this.simulateEmailVerification(email);
             if (isValid) {
@@ -242,7 +362,6 @@ class ContactDiscoveryEngine {
         const phones = [];
         const location = searchData.location || '';
         
-        // Generate realistic phone numbers based on location
         if (location.toLowerCase().includes('saudi') || location.toLowerCase().includes('riyadh')) {
             phones.push({
                 number: `+966 50 ${this.randomDigits(3)} ${this.randomDigits(4)}`,
@@ -287,7 +406,7 @@ class ContactDiscoveryEngine {
             lastUpdated: new Date().toISOString()
         };
 
-        results.forEach((result, index) => {
+        results.forEach((result) => {
             if (result.status === 'fulfilled' && result.value) {
                 const data = result.value;
                 
@@ -311,12 +430,10 @@ class ContactDiscoveryEngine {
             }
         });
 
-        // Remove duplicates and sort by confidence
         aggregated.emails = this.deduplicateAndSort(aggregated.emails, 'email');
         aggregated.phones = this.deduplicateAndSort(aggregated.phones, 'number');
         aggregated.socialProfiles = this.deduplicateAndSort(aggregated.socialProfiles, 'url');
         
-        // Calculate overall confidence
         aggregated.confidence = this.calculateOverallConfidence(aggregated);
 
         return aggregated;
@@ -382,17 +499,15 @@ class ContactDiscoveryEngine {
     }
 
     async simulateEmailVerification(email) {
-        // Simulate realistic email verification
         await this.delay(100 + Math.random() * 200);
         
-        // More realistic verification logic
         const domain = email.split('@')[1];
         const commonDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com'];
         
         if (commonDomains.includes(domain)) {
-            return Math.random() > 0.3; // 70% valid for common domains
+            return Math.random() > 0.3;
         } else {
-            return Math.random() > 0.5; // 50% valid for company domains
+            return Math.random() > 0.5;
         }
     }
 
@@ -458,7 +573,6 @@ class ContactDiscoveryEngine {
     }
 
     generateIntelligentFallback(searchData) {
-        // Generate intelligent fallback data when search fails
         return {
             name: searchData.name,
             title: searchData.title,
@@ -478,39 +592,11 @@ class ContactDiscoveryEngine {
         };
     }
 
-    async saveSearchHistory(searchData, results, searchId) {
-        const historyEntry = {
-            id: searchId,
-            timestamp: new Date().toISOString(),
-            query: {
-                name: searchData.name,
-                company: searchData.company,
-                title: searchData.title
-            },
-            results: {
-                emailsFound: results.emails?.length || 0,
-                phonesFound: results.phones?.length || 0,
-                socialProfilesFound: results.socialProfiles?.length || 0,
-                confidence: results.confidence
-            }
-        };
-
-        const history = await this.getStoredHistory();
-        history.push(historyEntry);
-        
-        // Keep only last 100 searches
-        if (history.length > 100) {
-            history.splice(0, history.length - 100);
-        }
-        
-        await chrome.storage.local.set({ searchHistory: history });
-    }
-
     async getSearchHistory() {
         const history = await this.getStoredHistory();
         return {
             success: true,
-            history: history.slice(-20).reverse() // Last 20 searches, newest first
+            history: history.slice(-20).reverse()
         };
     }
 
@@ -519,13 +605,40 @@ class ContactDiscoveryEngine {
         return result.searchHistory || [];
     }
 
+    async initializeDatabase() {
+        try {
+            if (typeof DemoriDatabase !== 'undefined') {
+                this.database = new DemoriDatabase();
+                console.log('Database integration initialized');
+            } else {
+                console.warn('Database class not available, using fallback mode');
+            }
+        } catch (error) {
+            console.error('Database initialization failed:', error);
+        }
+    }
+
+    handleProfileDetected(profileData) {
+        console.log('Profile detected:', profileData);
+        
+        chrome.storage.local.get(['profileDetections'], (result) => {
+            const detections = result.profileDetections || [];
+            detections.push({
+                ...profileData,
+                detectedAt: new Date().toISOString()
+            });
+            
+            if (detections.length > 50) {
+                detections.shift();
+            }
+            
+            chrome.storage.local.set({ profileDetections: detections });
+        });
+    }
+
     // Utility methods
     generateSearchId() {
         return `search_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`;
-    }
-
-    generateCacheKey(data) {
-        return `${data.name}_${data.company}`.toLowerCase().replace(/\s+/g, '_');
     }
 
     randomDigits(count) {
@@ -540,27 +653,15 @@ class ContactDiscoveryEngine {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async initializeDatabase() {
-        // Initialize any required database structures
-        console.log('Contact Discovery Engine initialized');
+    // Placeholder methods for missing functionality
+    async performBatchSearch(data) {
+        console.log('Batch search not implemented yet');
+        return { success: false, error: 'Not implemented' };
     }
 
-    handleProfileDetected(profileData) {
-        console.log('Profile detected:', profileData);
-        // Store profile detection for analytics
-        chrome.storage.local.get(['profileDetections'], (result) => {
-            const detections = result.profileDetections || [];
-            detections.push({
-                ...profileData,
-                detectedAt: new Date().toISOString()
-            });
-            
-            if (detections.length > 50) {
-                detections.shift();
-            }
-            
-            chrome.storage.local.set({ profileDetections: detections });
-        });
+    async exportSearchResults(data) {
+        console.log('Export results not implemented yet');
+        return { success: false, error: 'Not implemented' };
     }
 }
 

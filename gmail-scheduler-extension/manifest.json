@@ -16,6 +16,10 @@
     "https://api.demori.com/*"
   ],
   
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
+  
   "background": {
     "service_worker": "js/background.js"
   },
@@ -46,7 +50,7 @@
   
   "web_accessible_resources": [
     {
-      "resources": ["images/*", "css/*"],
+      "resources": ["images/*", "css/*", "js/database.js"],
       "matches": ["https://*.linkedin.com/*"]
     }
   ]
