@@ -1,42 +1,39 @@
 {
   "manifest_version": 3,
-  "name": "DEMORI Contact Finder Pro",
+  "name": "Demori Contact Finder",
   "version": "1.0.0",
-  "description": "Professional contact discovery tool powered by comprehensive business databases. Find verified email addresses and phone numbers instantly.",
+  "description": "Advanced contact discovery system for professional networking",
   
   "permissions": [
-    "storage",
     "activeTab",
+    "storage",
     "scripting",
-    "background"
+    "tabs"
   ],
   
   "host_permissions": [
-    "https://linkedin.com/*",
     "https://*.linkedin.com/*",
-    "https://your-api-domain.com/*"
+    "https://api.demori.com/*"
   ],
   
   "background": {
     "service_worker": "js/background.js"
   },
   
-  "content_scripts": [{
-    "matches": [
-      "https://linkedin.com/*",
-      "https://*.linkedin.com/*"
-    ],
-    "js": ["js/content.js"],
-    "css": ["css/content.css"],
-    "run_at": "document_end"
-  }],
+  "content_scripts": [
+    {
+      "matches": ["https://*.linkedin.com/*"],
+      "js": ["js/content.js"],
+      "run_at": "document_end"
+    }
+  ],
   
   "action": {
     "default_popup": "popup.html",
-    "default_title": "DEMORI Contact Finder Pro",
+    "default_title": "Demori Contact Finder",
     "default_icon": {
       "16": "icons/icon16.png",
-      "48": "icons/icon48.png", 
+      "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     }
   },
@@ -47,11 +44,10 @@
     "128": "icons/icon128.png"
   },
   
-  "web_accessible_resources": [{
-    "resources": [
-      "images/demori-logo.png",
-      "oauth.html"
-    ],
-    "matches": ["<all_urls>"]
-  }]
+  "web_accessible_resources": [
+    {
+      "resources": ["images/*", "css/*"],
+      "matches": ["https://*.linkedin.com/*"]
+    }
+  ]
 }

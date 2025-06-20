@@ -1,269 +1,199 @@
 <!DOCTYPE html>
-<html dir="ltr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEMORI Contact Finder Pro</title>
+    <title>Demori</title>
     <link rel="stylesheet" href="css/popup.css">
 </head>
 <body>
-    <!-- Header with Logo -->
-    <div class="header">
-        <div class="logo-container">
-            <img src="images/demori-logo.png" alt="DEMORI" class="logo">
-            <div class="logo-text">
-                <h1>DEMORI</h1>
-                <span>Contact Finder Pro</span>
-            </div>
-        </div>
-        <div class="header-stats">
-            <span id="credits-count" class="credits">Credits: 0</span>
-            <span id="daily-usage" class="usage">Today: 0/100</span>
-        </div>
-    </div>
-
-    <!-- Main Content -->
-    <div class="content">
-        
-        <!-- Welcome Section (First Time) -->
-        <div id="welcome-section" class="section hidden">
-            <div class="welcome-card">
-                <h2>🎉 Welcome to DEMORI</h2>
-                <p>Find verified contact information for any LinkedIn profile instantly!</p>
-                
-                <div class="features-list">
-                    <div class="feature-item">
-                        <span class="feature-icon">📧</span>
-                        <span>Verified Email Addresses</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">📞</span>
-                        <span>Direct Phone Numbers</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">🔗</span>
-                        <span>Social Media Links</span>
-                    </div>
-                    <div class="feature-item">
-                        <span class="feature-icon">🎯</span>
-                        <span>50M+ Business Contacts</span>
-                    </div>
-                </div>
-
-                <div class="trial-info">
-                    <p><strong>🎁 10 Free Searches</strong> included with your trial!</p>
-                    <button id="start-trial-btn" class="btn primary">Start Using DEMORI</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Dashboard -->
-        <div id="dashboard-section" class="section">
+    <div class="container">
+        <div class="header">
+            <button class="close-btn" id="closeBtn">×</button>
             
-            <!-- Quick Stats -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-value" id="searches-today">0</div>
-                    <div class="stat-label">Searches Today</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="contacts-found">0</div>
-                    <div class="stat-label">Contacts Found</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="success-rate">0%</div>
-                    <div class="stat-label">Success Rate</div>
-                </div>
-            </div>
-
-            <!-- Current Status -->
-            <div class="status-card">
-                <div id="linkedin-status" class="status-item">
-                    <span class="status-icon">🔍</span>
-                    <div class="status-text">
-                        <div class="status-title">Ready to Search</div>
-                        <div class="status-description">Visit any LinkedIn profile to find contact information</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="actions-section">
-                <h3>Quick Actions</h3>
-                <div class="action-buttons">
-                    <button id="open-linkedin-btn" class="btn secondary">
-                        <span class="btn-icon">🔗</span>
-                        Open LinkedIn
-                    </button>
-                    <button id="view-history-btn" class="btn secondary">
-                        <span class="btn-icon">📋</span>
-                        Search History
-                    </button>
-                    <button id="export-contacts-btn" class="btn secondary">
-                        <span class="btn-icon">📥</span>
-                        Export Contacts
-                    </button>
-                </div>
-            </div>
-
-            <!-- Recent Searches -->
-            <div class="recent-section">
-                <h3>Recent Searches</h3>
-                <div id="recent-searches" class="recent-list">
-                    <div class="empty-state">
-                        <p>No recent searches</p>
-                        <small>Start by visiting a LinkedIn profile</small>
-                    </div>
-                </div>
+            <div class="logo-section">
+                <div class="logo-icon">D</div>
+                <div class="logo-text">DEMORI</div>
             </div>
         </div>
 
-        <!-- Settings Section -->
-        <div id="settings-section" class="section hidden">
-            <h2>⚙️ Settings</h2>
-            
-            <div class="settings-group">
-                <h3>Search Preferences</h3>
-                <div class="setting-item">
-                    <label class="setting-label">
-                        <input type="checkbox" id="auto-search" checked>
-                        <span class="checkmark"></span>
-                        Auto-search when visiting profiles
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <label class="setting-label">
-                        <input type="checkbox" id="show-notifications" checked>
-                        <span class="checkmark"></span>
-                        Show notifications
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <label class="setting-label">
-                        <input type="checkbox" id="save-history" checked>
-                        <span class="checkmark"></span>
-                        Save search history
-                    </label>
-                </div>
+        <div class="content">
+            <!-- Default Menu View -->
+            <div id="menuView">
+                <div class="section">
+                    <div class="section-title">Demori Solutions</div>
+                    
+                    <div class="menu-item" onclick="DemoriPopup.showSearchPortal()">
+                        <span class="menu-icon">◫</span>
+                        <span class="menu-text">Data Lists</span>
+                    </div>
             </div>
 
-            <div class="settings-group">
-                <h3>Account</h3>
-                <div class="account-info">
-                    <div class="account-item">
-                        <span class="account-label">Plan:</span>
-                        <span id="user-plan" class="account-value">Free Trial</span>
-                    </div>
-                    <div class="account-item">
-                        <span class="account-label">Credits:</span>
-                        <span id="account-credits" class="account-value">0</span>
-                    </div>
+            <!-- Search Portal View -->
+            <div id="searchView" class="hidden">
+                <div class="search-section">
+                    <input type="text" class="search-input" placeholder="Search contacts and companies..." id="searchInput">
+                    <button class="search-btn" onclick="DemoriPopup.performSearch()" id="searchButton">
+                        Scan
+                    </button>
                 </div>
                 
-                <div class="account-actions">
-                    <button id="upgrade-plan-btn" class="btn primary">
-                        <span class="btn-icon">⬆️</span>
-                        Upgrade Plan
-                    </button>
-                    <button id="login-btn" class="btn secondary">
-                        <span class="btn-icon">🔐</span>
-                        Login/Register
-                    </button>
+                <div class="profile-detection" id="profileDetection">
+                    <div class="detection-header">
+                        <span class="status-icon" id="statusIcon"></span>
+                        <span class="detection-title">Profile Detection</span>
+                    </div>
+                    <div class="detected-info" id="detectedInfo">
+                        <div class="info-item">
+                            <span class="info-label">Name:</span>
+                            <span class="info-value" id="detectedName">Detecting...</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Company:</span>
+                            <span class="info-value" id="detectedCompany">Detecting...</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Title:</span>
+                            <span class="info-value" id="detectedTitle">Detecting...</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="settings-group">
-                <h3>Data & Privacy</h3>
-                <div class="privacy-actions">
-                    <button id="clear-data-btn" class="btn danger small">
-                        Clear All Data
-                    </button>
-                    <button id="export-data-btn" class="btn secondary small">
-                        Export My Data
-                    </button>
+            <!-- Progress View -->
+            <div id="progressView" class="hidden">
+                <div class="progress-container">
+                    <div class="progress-header">
+                        <span class="progress-title">Scanning Data Sources</span>
+                        <span class="progress-stats" id="progressStats">0 of 5</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-steps" id="progressSteps">
+                        <div class="progress-step">
+                            <div class="step-icon pending" id="step1">1</div>
+                            <span>Local Database Search</span>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-icon pending" id="step2">2</div>
+                            <span>Company Websites</span>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-icon pending" id="step3">3</div>
+                            <span>Professional Directories</span>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-icon pending" id="step4">4</div>
+                            <span>Social Platforms</span>
+                        </div>
+                        <div class="progress-step">
+                            <div class="step-icon pending" id="step5">5</div>
+                            <span>Data Verification</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results View -->
+            <div id="resultsView" class="hidden">
+                <div class="contact-header">
+                    <div style="display: flex; align-items: center;">
+                        <div class="contact-logo">D</div>
+                        <div style="margin-left: 12px;">
+                            <div style="font-weight: 600; font-size: 14px; color: rgba(0, 255, 255, 0.9);">DEMORI</div>
+                            <div style="font-size: 11px; color: #666;">Contact Discovery System</div>
+                        </div>
+                    </div>
+                    <button class="close-btn" onclick="DemoriPopup.showMenu()">×</button>
+                </div>
+
+                <div class="nav-tabs">
+                    <span class="nav-tab">About</span>
+                    <span class="nav-tab active">Contacts</span>
+                    <span class="nav-tab">Similar</span>
+                </div>
+
+                <select class="department-select" id="departmentSelect">
+                    <option>Select department</option>
+                    <option>Engineering</option>
+                    <option>Sales</option>
+                    <option>Marketing</option>
+                    <option>Executive</option>
+                </select>
+
+                <div class="select-all">
+                    <div class="checkbox checked" onclick="DemoriPopup.toggleSelectAll(this)"></div>
+                    <span>Select all contacts (<span id="contactCount">0</span>)</span>
+                </div>
+
+                <div id="contactsList">
+                    <!-- Contact items will be populated here -->
+                </div>
+                
+                <div class="error-message" id="errorMessage">
+                    <strong>Error!</strong> <span id="errorText">Unable to find contact information.</span>
                 </div>
             </div>
         </div>
-
-        <!-- Upgrade Section -->
-        <div id="upgrade-section" class="section hidden">
-            <h2>🚀 Upgrade Your Plan</h2>
-            
-            <div class="upgrade-cards">
-                <div class="upgrade-card">
-                    <div class="plan-header">
-                        <h3>Professional</h3>
-                        <div class="plan-price">$29<span>/month</span></div>
-                    </div>
-                    <ul class="plan-features">
-                        <li>500 searches/month</li>
-                        <li>Email verification</li>
-                        <li>Phone number access</li>
-                        <li>Export to CSV</li>
-                        <li>Priority support</li>
-                    </ul>
-                    <button class="btn primary">Choose Plan</button>
-                </div>
-
-                <div class="upgrade-card featured">
-                    <div class="plan-ribbon">Most Popular</div>
-                    <div class="plan-header">
-                        <h3>Business</h3>
-                        <div class="plan-price">$79<span>/month</span></div>
-                    </div>
-                    <ul class="plan-features">
-                        <li>2000 searches/month</li>
-                        <li>Advanced filters</li>
-                        <li>Bulk search</li>
-                        <li>CRM integration</li>
-                        <li>Team features</li>
-                        <li>API access</li>
-                    </ul>
-                    <button class="btn primary">Choose Plan</button>
-                </div>
-
-                <div class="upgrade-card">
-                    <div class="plan-header">
-                        <h3>Enterprise</h3>
-                        <div class="plan-price">Custom</div>
-                    </div>
-                    <ul class="plan-features">
-                        <li>Unlimited searches</li>
-                        <li>Custom integrations</li>
-                        <li>Dedicated support</li>
-                        <li>SLA guarantee</li>
-                        <li>On-premise option</li>
-                    </ul>
-                    <button class="btn secondary">Contact Sales</button>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <div class="bottom-nav">
-        <button class="nav-btn active" data-section="dashboard">
-            <span class="nav-icon">🏠</span>
-            <span class="nav-label">Dashboard</span>
-        </button>
-        <button class="nav-btn" data-section="settings">
-            <span class="nav-icon">⚙️</span>
-            <span class="nav-label">Settings</span>
-        </button>
-        <button class="nav-btn" data-section="upgrade">
-            <span class="nav-icon">🚀</span>
-            <span class="nav-label">Upgrade</span>
-        </button>
-    </div>
-
-    <!-- Loading Overlay -->
-    <div id="loading-overlay" class="loading-overlay hidden">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <p id="loading-text">Loading...</p>
-        </div>
-    </div>
-
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
     <script src="js/popup.js"></script>
 </body>
-</html>
+</html>>
+                    
+                    <div class="menu-item" onclick="DemoriPopup.showSearchPortal()">
+                        <span class="menu-icon">◉</span>
+                        <span class="menu-text">Search Portal</span>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <span class="menu-icon">◈</span>
+                        <span class="menu-text">Email Campaign</span>
+                        <span class="menu-arrow">></span>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <span class="menu-icon">◎</span>
+                        <span class="menu-text">Data Enrichment</span>
+                        <span class="menu-badge">New</span>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <span class="menu-icon">◇</span>
+                        <span class="menu-text">Connect Integrations</span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">Bulk Operations</div>
+                    
+                    <div class="menu-item" onclick="DemoriPopup.detectAndSearch()">
+                        <span class="menu-icon">◐</span>
+                        <span class="menu-text">Save Open Profiles</span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">System Preferences</div>
+                    
+                    <div class="menu-item">
+                        <span class="menu-icon">◑</span>
+                        <span class="menu-text">Hide Sidebar</span>
+                        <div class="toggle-switch" onclick="DemoriPopup.toggleSwitch(this)"></div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <span class="menu-icon">◒</span>
+                        <span class="menu-text">AI Writer on Gmail</span>
+                        <div class="toggle-switch" onclick="DemoriPopup.toggleSwitch(this)"></div>
+                    </div>
+                    
+                    <div class="menu-item" onclick="DemoriPopup.detectAndSearch()">
+                        <span class="menu-icon">◓</span>
+                        <span class="menu-text">Find leads on any site</span>
+                        <div class="toggle-switch active" onclick="DemoriPopup.toggleSwitch(this)"></div>
+                    </div>
+                </div
