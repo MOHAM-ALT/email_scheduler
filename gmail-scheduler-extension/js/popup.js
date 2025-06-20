@@ -1,4 +1,110 @@
-// Demori Popup Controller
+// Advanced Settings Management
+    showAdvancedSettings() {
+        this.hideAllViews();
+        document.getElementById('advancedSettingsView').classList.remove('hidden');
+        this.currentView = 'settings';
+        this.loadCurrentSettings();
+    }
+
+    async loadCurrentSettings() {
+        try {
+            const settings = await chrome.storage.local.get(['demoriSettings']);
+            const currentSettings = settings.demoriSettings || this.getDefaultSettings();
+            
+            // Load all setting values into UI
+            Object.keys(currentSettings).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    if (element.type === 'range') {
+                        element.value = currentSettings[key];
+                        const valueSpan = element.parentElement.querySelector('.range-value');
+                        if (valueSpan) valueSpan.textContent = currentSettings[key] + '%';
+                    } else {
+                        element.value = currentSettings[key];
+                    }
+                }
+            });
+
+            // Load toggle switches
+            const toggles = document.querySelectorAll('[data-setting]');
+            toggles.forEach(toggle => {
+                const setting = toggle.getAttribute('data-setting');
+                if (currentSettings[setting]) {
+                    toggle.classList.add('active');
+                } else {
+                    toggle.classList.remove('active');
+                }
+            });
+
+            // Load data sources
+            if (currentSettings.dataSources) {
+                Object.keys(currentSettings.dataSources).forEach(source => {
+                    const sourceElement = document.querySelector(`[onclick*="${source}"]`);
+                    if (sourceElement && currentSettings.dataSources[source]) {
+                        sourceElement.classList.add('active');
+                    }
+                });
+            }
+
+        } catch (error) {
+            console.error('Error loading settings:', error);
+        }
+    }
+
+    getDefaultSettings() {
+        return {
+            searchDepth: 'standard',
+            emailVerification: 'domain',
+            phoneValidation: 'carrier',
+            confidenceThreshold: 60,
+            searchTimeout: 60,
+            concurrentSearches: 3,
+            cacheDuration: 86400,
+            databaseSync: 'realtime',
+            exportFormat: 'csv',
+            encryptionLevel: 'standard',
+            autoDetect: true,
+            backgroundScan: false,
+            realtimeSync: true,
+            autoExport: false,
+            dataAnonymization: false,
+            localStorageOnly: false,
+            dataSources: {
+                companyWebsites: true,
+                professionalDirectories: true,
+                socialPlatforms: true,
+                publicRecords: false,
+                newsArticles: false,
+                patentDatabases: false
+            }
+        };
+    }
+
+    async updateSetting(key, value) {
+        try {
+            const settings = await chrome.storage.local.get(['demoriSettings']);
+            const currentSettings = settings.demoriSettings || this.getDefaultSettings();
+            
+            currentSettings[key] = value;
+            
+            await chrome.storage.local.set({ demoriSettings: currentSettings });
+            
+            // Update range display if applicable
+            if (key === 'confidenceThreshold') {
+                document.getElementById('confidenceValue').textContent = value + '%';
+            }
+            
+            // Notify background script of settings change
+            chrome.runtime.sendMessage({
+                action: 'updateSettings',
+                data: currentSettings
+            });
+
+            console.log(`Setting ${key} updated to:`, value);
+        } catch (error) {
+            console.error('Error updating setting:', error);
+        }
+    }// Demori Popup Controller
 class DemoriPopup {
     constructor() {
         this.currentView = 'menu';
