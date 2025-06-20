@@ -1,273 +1,258 @@
 <!DOCTYPE html>
-<html dir="rtl">
+<html dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DEMORI Gmail Scheduler Pro</title>
+    <title>DEMORI Contact Finder Pro</title>
     <link rel="stylesheet" href="css/popup.css">
 </head>
 <body>
-    <!-- Fixed Header with Animated Logo -->
-    <div class="header-fixed" id="header">
+    <!-- Header with Logo -->
+    <div class="header">
         <div class="logo-container">
-            <img src="images/demori-logo.png" alt="DEMORI" class="logo-animated">
+            <img src="images/demori-logo.png" alt="DEMORI" class="logo">
             <div class="logo-text">
                 <h1>DEMORI</h1>
-                <span>Gmail Scheduler Pro</span>
+                <span>Contact Finder Pro</span>
             </div>
         </div>
         <div class="header-stats">
-            <span id="email-count">0 emails</span>
-            <span id="connection-status" class="status-disconnected">🔴 Disconnected</span>
+            <span id="credits-count" class="credits">Credits: 0</span>
+            <span id="daily-usage" class="usage">Today: 0/100</span>
         </div>
     </div>
 
-    <div class="content-wrapper">
-        <!-- Authentication Section -->
-        <div id="auth-section" class="section">
-            <div class="auth-card">
-                <h2>🔐 Gmail Authentication</h2>
-                <p>Connect your Gmail account to start scheduling emails</p>
-                <button id="auth-btn" class="btn-primary">
-                    <span class="btn-icon">🔗</span>
-                    Connect Gmail Account
-                </button>
+    <!-- Main Content -->
+    <div class="content">
+        
+        <!-- Welcome Section (First Time) -->
+        <div id="welcome-section" class="section hidden">
+            <div class="welcome-card">
+                <h2>🎉 Welcome to DEMORI</h2>
+                <p>Find verified contact information for any LinkedIn profile instantly!</p>
+                
+                <div class="features-list">
+                    <div class="feature-item">
+                        <span class="feature-icon">📧</span>
+                        <span>Verified Email Addresses</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📞</span>
+                        <span>Direct Phone Numbers</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🔗</span>
+                        <span>Social Media Links</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🎯</span>
+                        <span>50M+ Business Contacts</span>
+                    </div>
+                </div>
+
+                <div class="trial-info">
+                    <p><strong>🎁 10 Free Searches</strong> included with your trial!</p>
+                    <button id="start-trial-btn" class="btn primary">Start Using DEMORI</button>
+                </div>
             </div>
         </div>
 
-        <!-- Main Scheduler Interface -->
-        <div id="scheduler-section" class="section hidden">
-            <div class="card">
-                <h2>📧 Email Campaign Setup</h2>
-                
-                <!-- Recipients -->
-                <div class="form-group">
-                    <label class="label-pro">
-                        <span class="label-text">Recipients List</span>
-                        <span class="label-count" id="recipient-count">0 recipients</span>
-                    </label>
-                    <textarea 
-                        id="recipients" 
-                        placeholder="email1@example.com,John Doe
-email2@example.com,Jane Smith
-email3@example.com,Alex Johnson
-
-Format: email,name (name optional for personalization)"
-                        rows="6"
-                    ></textarea>
+        <!-- Main Dashboard -->
+        <div id="dashboard-section" class="section">
+            
+            <!-- Quick Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="searches-today">0</div>
+                    <div class="stat-label">Searches Today</div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="contacts-found">0</div>
+                    <div class="stat-label">Contacts Found</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="success-rate">0%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            </div>
 
-                <!-- Email Details -->
-                <div class="form-row">
-                    <div class="form-group flex-2">
-                        <label class="label-pro">Subject Line</label>
-                        <input 
-                            type="text" 
-                            id="subject" 
-                            placeholder="Your professional email subject"
-                            maxlength="100"
-                        >
-                        <div class="char-counter">
-                            <span id="subject-count">0</span>/100 characters
-                        </div>
-                    </div>
-                    <div class="form-group flex-1">
-                        <label class="label-pro">Email Type</label>
-                        <select id="email-type">
-                            <option value="to">Direct (TO)</option>
-                            <option value="bcc" selected>BCC (Recommended)</option>
-                            <option value="cc">CC (Copy)</option>
-                        </select>
+            <!-- Current Status -->
+            <div class="status-card">
+                <div id="linkedin-status" class="status-item">
+                    <span class="status-icon">🔍</span>
+                    <div class="status-text">
+                        <div class="status-title">Ready to Search</div>
+                        <div class="status-description">Visit any LinkedIn profile to find contact information</div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Email Body -->
-                <div class="form-group">
-                    <label class="label-pro">
-                        <span class="label-text">Email Message</span>
-                        <span class="personalization-tip">💡 Use {{name}} for personalization</span>
-                    </label>
-                    <textarea 
-                        id="message" 
-                        placeholder="Dear {{name}},
-
-I hope this email finds you well.
-
-[Your message content here]
-
-Best regards,
-Your Name
-
----
-If you'd like to unsubscribe, please reply with 'UNSUBSCRIBE'"
-                        rows="8"
-                    ></textarea>
-                    <div class="char-counter">
-                        <span id="message-count">0</span> characters
-                    </div>
-                </div>
-
-                <!-- Scheduling Options -->
-                <div class="card-inner">
-                    <h3>⏰ Smart Scheduling Options</h3>
-                    
-                    <div class="form-row">
-                        <div class="form-group flex-1">
-                            <label class="label-pro">Distribution Mode</label>
-                            <select id="distribution-mode">
-                                <option value="recommended">🎯 Recommended (499/day)</option>
-                                <option value="conservative">🛡️ Conservative (50/day)</option>
-                                <option value="aggressive">⚡ Aggressive (Custom)</option>
-                            </select>
-                        </div>
-                        <div class="form-group flex-1" id="custom-rate-group" style="display: none;">
-                            <label class="label-pro">Emails per Day</label>
-                            <input type="number" id="custom-rate" min="1" max="500" value="100">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group flex-1">
-                            <label class="label-pro">Batch Size</label>
-                            <select id="batch-size">
-                                <option value="10" selected>10 emails per batch</option>
-                                <option value="5">5 emails per batch</option>
-                                <option value="1">1 email per batch</option>
-                            </select>
-                        </div>
-                        <div class="form-group flex-1">
-                            <label class="label-pro">Delay Between Batches</label>
-                            <select id="batch-delay">
-                                <option value="2">2 minutes (Recommended)</option>
-                                <option value="1">1 minute</option>
-                                <option value="3">3 minutes</option>
-                                <option value="5">5 minutes</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="label-pro">Start Date & Time</label>
-                        <div class="datetime-group">
-                            <input type="date" id="start-date">
-                            <input type="time" id="start-time" value="09:00">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Campaign Preview -->
-                <div class="preview-card" id="campaign-preview">
-                    <h3>📊 Campaign Preview</h3>
-                    <div class="preview-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Total Recipients:</span>
-                            <span class="stat-value" id="preview-recipients">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Daily Rate:</span>
-                            <span class="stat-value" id="preview-daily">0/day</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Campaign Duration:</span>
-                            <span class="stat-value" id="preview-duration">0 days</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Completion Date:</span>
-                            <span class="stat-value" id="preview-completion">-</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Action Buttons -->
+            <!-- Quick Actions -->
+            <div class="actions-section">
+                <h3>Quick Actions</h3>
                 <div class="action-buttons">
-                    <button id="preview-btn" class="btn-secondary">
-                        <span class="btn-icon">👁️</span>
-                        Preview Campaign
+                    <button id="open-linkedin-btn" class="btn secondary">
+                        <span class="btn-icon">🔗</span>
+                        Open LinkedIn
                     </button>
-                    <button id="schedule-btn" class="btn-primary">
-                        <span class="btn-icon">🚀</span>
-                        Schedule Campaign
+                    <button id="view-history-btn" class="btn secondary">
+                        <span class="btn-icon">📋</span>
+                        Search History
+                    </button>
+                    <button id="export-contacts-btn" class="btn secondary">
+                        <span class="btn-icon">📥</span>
+                        Export Contacts
                     </button>
                 </div>
             </div>
-        </div>
 
-        <!-- Campaign Management -->
-        <div id="campaigns-section" class="section">
-            <div class="card">
-                <h2>📋 Active Campaigns</h2>
-                <div id="campaigns-list">
+            <!-- Recent Searches -->
+            <div class="recent-section">
+                <h3>Recent Searches</h3>
+                <div id="recent-searches" class="recent-list">
                     <div class="empty-state">
-                        <p>No active campaigns yet</p>
-                        <small>Create your first campaign above</small>
+                        <p>No recent searches</p>
+                        <small>Start by visiting a LinkedIn profile</small>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Settings -->
-        <div id="settings-section" class="section">
-            <div class="card">
-                <h2>⚙️ Advanced Settings</h2>
+        <!-- Settings Section -->
+        <div id="settings-section" class="section hidden">
+            <h2>⚙️ Settings</h2>
+            
+            <div class="settings-group">
+                <h3>Search Preferences</h3>
+                <div class="setting-item">
+                    <label class="setting-label">
+                        <input type="checkbox" id="auto-search" checked>
+                        <span class="checkmark"></span>
+                        Auto-search when visiting profiles
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label class="setting-label">
+                        <input type="checkbox" id="show-notifications" checked>
+                        <span class="checkmark"></span>
+                        Show notifications
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label class="setting-label">
+                        <input type="checkbox" id="save-history" checked>
+                        <span class="checkmark"></span>
+                        Save search history
+                    </label>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <h3>Account</h3>
+                <div class="account-info">
+                    <div class="account-item">
+                        <span class="account-label">Plan:</span>
+                        <span id="user-plan" class="account-value">Free Trial</span>
+                    </div>
+                    <div class="account-item">
+                        <span class="account-label">Credits:</span>
+                        <span id="account-credits" class="account-value">0</span>
+                    </div>
+                </div>
                 
-                <div class="setting-group">
-                    <h3>🛡️ Anti-Spam Protection</h3>
-                    <div class="checkbox-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="randomize-timing" checked>
-                            <span class="checkmark"></span>
-                            Randomize sending times
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="avoid-weekends" checked>
-                            <span class="checkmark"></span>
-                            Skip weekends
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="personalization" checked>
-                            <span class="checkmark"></span>
-                            Auto-personalization
-                        </label>
+                <div class="account-actions">
+                    <button id="upgrade-plan-btn" class="btn primary">
+                        <span class="btn-icon">⬆️</span>
+                        Upgrade Plan
+                    </button>
+                    <button id="login-btn" class="btn secondary">
+                        <span class="btn-icon">🔐</span>
+                        Login/Register
+                    </button>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <h3>Data & Privacy</h3>
+                <div class="privacy-actions">
+                    <button id="clear-data-btn" class="btn danger small">
+                        Clear All Data
+                    </button>
+                    <button id="export-data-btn" class="btn secondary small">
+                        Export My Data
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upgrade Section -->
+        <div id="upgrade-section" class="section hidden">
+            <h2>🚀 Upgrade Your Plan</h2>
+            
+            <div class="upgrade-cards">
+                <div class="upgrade-card">
+                    <div class="plan-header">
+                        <h3>Professional</h3>
+                        <div class="plan-price">$29<span>/month</span></div>
                     </div>
+                    <ul class="plan-features">
+                        <li>500 searches/month</li>
+                        <li>Email verification</li>
+                        <li>Phone number access</li>
+                        <li>Export to CSV</li>
+                        <li>Priority support</li>
+                    </ul>
+                    <button class="btn primary">Choose Plan</button>
                 </div>
 
-                <div class="setting-group">
-                    <h3>📊 Analytics</h3>
-                    <div class="checkbox-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="track-opens">
-                            <span class="checkmark"></span>
-                            Track email opens
-                        </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="track-clicks">
-                            <span class="checkmark"></span>
-                            Track link clicks
-                        </label>
+                <div class="upgrade-card featured">
+                    <div class="plan-ribbon">Most Popular</div>
+                    <div class="plan-header">
+                        <h3>Business</h3>
+                        <div class="plan-price">$79<span>/month</span></div>
                     </div>
+                    <ul class="plan-features">
+                        <li>2000 searches/month</li>
+                        <li>Advanced filters</li>
+                        <li>Bulk search</li>
+                        <li>CRM integration</li>
+                        <li>Team features</li>
+                        <li>API access</li>
+                    </ul>
+                    <button class="btn primary">Choose Plan</button>
                 </div>
 
-                <button id="reset-settings" class="btn-danger">
-                    <span class="btn-icon">🔄</span>
-                    Reset to Defaults
-                </button>
+                <div class="upgrade-card">
+                    <div class="plan-header">
+                        <h3>Enterprise</h3>
+                        <div class="plan-price">Custom</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li>Unlimited searches</li>
+                        <li>Custom integrations</li>
+                        <li>Dedicated support</li>
+                        <li>SLA guarantee</li>
+                        <li>On-premise option</li>
+                    </ul>
+                    <button class="btn secondary">Contact Sales</button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
-        <button class="nav-btn active" data-section="scheduler">
-            <span class="nav-icon">📧</span>
-            <span class="nav-label">Scheduler</span>
-        </button>
-        <button class="nav-btn" data-section="campaigns">
-            <span class="nav-icon">📋</span>
-            <span class="nav-label">Campaigns</span>
+        <button class="nav-btn active" data-section="dashboard">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Dashboard</span>
         </button>
         <button class="nav-btn" data-section="settings">
             <span class="nav-icon">⚙️</span>
             <span class="nav-label">Settings</span>
+        </button>
+        <button class="nav-btn" data-section="upgrade">
+            <span class="nav-icon">🚀</span>
+            <span class="nav-label">Upgrade</span>
         </button>
     </div>
 
@@ -275,7 +260,7 @@ If you'd like to unsubscribe, please reply with 'UNSUBSCRIBE'"
     <div id="loading-overlay" class="loading-overlay hidden">
         <div class="loading-content">
             <div class="loading-spinner"></div>
-            <p id="loading-text">Processing...</p>
+            <p id="loading-text">Loading...</p>
         </div>
     </div>
 

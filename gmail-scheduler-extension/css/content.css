@@ -1,42 +1,339 @@
-/* DEMORI Gmail Scheduler Pro - Content Styles */
-#demori-scheduler-btn {
-    font-family: 'Segoe UI', Arial, sans-serif !important;
+/* DEMORI Contact Finder Pro - LinkedIn Widget Styles */
+
+#demori-contact-widget {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    position: relative;
+    z-index: 9999;
+    margin: 20px 0;
 }
 
-#demori-scheduler-btn:hover {
-    background: linear-gradient(45deg, #5a6fd8, #6a4190) !important;
+.demori-widget-container {
+    background: #ffffff;
+    border: 1px solid #e1e5e9;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    transition: all 0.3s ease;
 }
 
-#demori-scheduler-btn:active {
-    transform: translateY(0) !important;
+.demori-widget-container:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
 }
 
-/* Compose integration styles */
-.demori-compose-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
+.demori-widget-container.success {
+    border-left: 4px solid #00a860;
+}
+
+.demori-widget-container.not-found {
+    border-left: 4px solid #ffa500;
+}
+
+.demori-widget-container.error {
+    border-left: 4px solid #e74c3c;
+}
+
+/* Header */
+.demori-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.demori-logo {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: white;
+    padding: 2px;
+}
+
+.demori-title {
+    font-weight: 600;
+    font-size: 14px;
+    flex: 1;
+}
+
+.demori-confidence {
+    font-size: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+/* Content */
+.demori-content {
+    padding: 16px;
+}
+
+/* Loading */
+.demori-loading {
+    text-align: center;
+    padding: 20px;
+}
+
+.demori-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #667eea;
+    border-radius: 50%;
+    animation: demori-spin 1s linear infinite;
+    margin: 0 auto 12px;
+}
+
+@keyframes demori-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.demori-loading p {
+    font-weight: 500;
+    color: #333;
+    margin: 0 0 4px 0;
+    font-size: 14px;
+}
+
+.demori-loading small {
+    color: #666;
+    font-size: 12px;
+}
+
+/* Contact Info */
+.demori-contact-info {
+    margin-bottom: 16px;
+}
+
+.demori-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.demori-contact-item:last-child {
+    border-bottom: none;
+}
+
+.demori-icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+.demori-label {
+    font-weight: 500;
+    color: #333;
+    min-width: 60px;
+    font-size: 13px;
+}
+
+.demori-value {
+    flex: 1;
+    color: #0073b1;
+    font-weight: 500;
+    font-size: 13px;
+    word-break: break-all;
+}
+
+.demori-copy-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.demori-copy-btn:hover {
+    background: #5a6fd8;
+}
+
+/* Social Links */
+.demori-social-links {
+    display: flex;
+    gap: 8px;
+}
+
+.demori-social-link {
+    background: #f0f0f0;
+    color: #333;
+    text-decoration: none;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    transition: background 0.2s;
+}
+
+.demori-social-link:hover {
+    background: #e0e0e0;
+}
+
+/* Actions */
+.demori-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.demori-btn {
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.demori-btn.primary {
+    background: #667eea;
+    color: white;
+}
+
+.demori-btn.primary:hover {
+    background: #5a6fd8;
+    transform: translateY(-1px);
+}
+
+.demori-btn.secondary {
+    background: #f8f9fa;
+    color: #667eea;
+    border: 1px solid #667eea;
+}
+
+.demori-btn.secondary:hover {
+    background: #667eea;
+    color: white;
+}
+
+.demori-btn.small {
+    padding: 4px 12px;
+    font-size: 12px;
+}
+
+/* Save Form */
+.demori-save-form {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.demori-notes {
     width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 10000;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    margin-bottom: 8px;
+    resize: vertical;
+}
+
+/* Not Found */
+.demori-not-found {
+    text-align: center;
+    padding: 20px 0;
+}
+
+.demori-not-found p {
+    color: #333;
+    margin: 0 0 4px 0;
+    font-weight: 500;
+}
+
+.demori-not-found small {
+    color: #666;
+    display: block;
+    margin-bottom: 16px;
+}
+
+/* Footer */
+.demori-footer {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 8px;
+    margin-top: 12px;
+}
+
+.demori-footer small {
+    color: #666;
+    font-size: 11px;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 4px;
 }
 
-.demori-compose-modal {
-    background: white;
-    border-radius: 12px;
-    padding: 20px;
-    max-width: 500px;
-    width: 90%;
-    max-height: 80vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+/* Animation for widget appearance */
+#demori-contact-widget {
+    animation: demori-slideIn 0.3s ease-out;
 }
 
-/* Gmail-specific adjustments */
-div[role="main"] .demori-scheduler-btn {
-    z-index: 100;
+@keyframes demori-slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .demori-widget-container {
+        margin: 10px;
+        border-radius: 8px;
+    }
+    
+    .demori-actions {
+        flex-direction: column;
+    }
+    
+    .demori-contact-item {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    
+    .demori-value {
+        word-break: break-word;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .demori-widget-container {
+        background: #1a1a1a;
+        border-color: #333;
+        color: #fff;
+    }
+    
+    .demori-contact-item {
+        border-color: #333;
+    }
+    
+    .demori-value {
+        color: #4fc3f7;
+    }
+    
+    .demori-btn.secondary {
+        background: #333;
+        border-color: #555;
+        color: #fff;
+    }
+    
+    .demori-footer {
+        border-color: #333;
+    }
 }

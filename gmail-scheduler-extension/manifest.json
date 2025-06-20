@@ -1,50 +1,57 @@
 {
   "manifest_version": 3,
-  "name": "DEMORI Gmail Scheduler Pro",
+  "name": "DEMORI Contact Finder Pro",
   "version": "1.0.0",
-  "description": "Professional email scheduling with intelligent distribution and anti-spam optimization by DEMORI",
+  "description": "Professional contact discovery tool powered by comprehensive business databases. Find verified email addresses and phone numbers instantly.",
+  
   "permissions": [
     "storage",
     "activeTab",
-    "identity",
-    "scripting"
+    "scripting",
+    "background"
   ],
+  
   "host_permissions": [
-    "https://mail.google.com/*",
-    "https://gmail.com/*",
-    "https://www.googleapis.com/*"
+    "https://linkedin.com/*",
+    "https://*.linkedin.com/*",
+    "https://your-api-domain.com/*"
   ],
+  
   "background": {
     "service_worker": "js/background.js"
   },
+  
   "content_scripts": [{
-    "matches": ["https://mail.google.com/*"],
+    "matches": [
+      "https://linkedin.com/*",
+      "https://*.linkedin.com/*"
+    ],
     "js": ["js/content.js"],
-    "css": ["css/content.css"]
+    "css": ["css/content.css"],
+    "run_at": "document_end"
   }],
+  
   "action": {
     "default_popup": "popup.html",
-    "default_title": "DEMORI Gmail Scheduler Pro",
+    "default_title": "DEMORI Contact Finder Pro",
     "default_icon": {
       "16": "icons/icon16.png",
-      "48": "icons/icon48.png",
+      "48": "icons/icon48.png", 
       "128": "icons/icon128.png"
     }
   },
+  
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
+  
   "web_accessible_resources": [{
-    "resources": ["oauth.html", "images/*"],
+    "resources": [
+      "images/demori-logo.png",
+      "oauth.html"
+    ],
     "matches": ["<all_urls>"]
-  }],
-  "oauth2": {
-    "client_id": "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
-    "scopes": [
-      "https://www.googleapis.com/auth/gmail.compose",
-      "https://www.googleapis.com/auth/gmail.send"
-    ]
-  }
+  }]
 }
